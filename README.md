@@ -5,7 +5,6 @@ markdown可视化编辑插件，可以在编辑的同时看到最终效果。
 
 ## 安装需求
 
-* Vim7.0+
 * Vim编译了python支持
 * 安装了python-webkit、python-gtk、python-markdown
 
@@ -30,4 +29,4 @@ git clone https://github.com/jiazhoulvke/MarkdownView
 
 ## 其他说明
 
-本插件只在Linux mint 14下测试过，Windows暂时还没测试。
+本插件在Linux mint 14下测试通过。
