@@ -1,7 +1,6 @@
 # MarkdownView
 
-markdown可视化编辑插件，可以在编辑的同时看到最终效果。
-
+让Vim变成所见即所得的MarkDown文件编辑器，可以在编辑时预览最终效果。
 
 ## 安装需求
 
@@ -25,8 +24,3 @@ git clone https://github.com/jiazhoulvke/MarkdownView
 ![MarkdownView](https://github.com/jiazhoulvke/MarkdownView/raw/master/MarkdownView.png)
 
 在Vim中对markdown文件进行修改会马上在右侧的窗口显示出来。
-
-
-## 其他说明
-
-本插件在Linux mint 14下测试通过。

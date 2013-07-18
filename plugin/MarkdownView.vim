@@ -13,6 +13,10 @@ if exists("g:markdownview_loaded")
     finish
 endif
 let g:markdownview_loaded=1
+" 自定义css样式名，无需添加后缀。不使用则留空。
+if !exists('g:markdownview_css')
+    let g:markdownview_css = ''
+endif
 
 "------------------------------------------------
 " Functions:{{{1
@@ -43,7 +47,18 @@ import markdown
 import webkit
 b = vim.current.buffer
 r = b.range(1,len(b))
-html = '<html><meta http-equiv="refresh" content="1" /><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><body>' + markdown.markdown('\n'.join(r)) + '</body></html>'
+html = '<html><meta http-equiv="refresh" content="1" /><meta http-equiv="Content-Type" content="text/html; charset=utf-8" />'
+css = vim.eval('g:markdownview_css')
+
+
+
+csspath = os.path.dirname(os.path.dirname(vim.eval('s:markdownview_sfile')))
+if len(css)>0:
+    cssfile = os.path.join(csspath,css+'.css')
+else:
+    cssfile = os.path.join(csspath,'github.css')
+html += '<link rel="stylesheet" type="text/css" href="file:///'+cssfile+'" media="all" />'
+html += '<body>' + markdown.markdown('\n'.join(r)) + '</body></html>'
 dirname = os.path.dirname(b.name)
 fname = os.path.basename(b.name).rsplit('.',1)[0] + '_mdv.html'
 frp = os.path.join(dirname,fname)
@@ -59,4 +74,4 @@ endfunction
 command! MarkdownView call MarkdownView()
 autocmd! CursorMoved,CursorMovedI,CursorHold *.md call MarkdownView_Update()
 
-" vim: ts=4 nowrap fdm=marker foldcolumn=1 filetype=vim
+" vim: ts=4 fdm=marker foldcolumn=1 filetype=vim
