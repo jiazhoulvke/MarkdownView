@@ -39,6 +39,7 @@ fname = os.path.basename(b.name).rsplit('.',1)[0] + '_mdv.html'
 frp = os.path.join(dirname,fname)
 os.system('python ' + pyfile + ' ' + frp + '&')
 EOA
+autocmd! <buffer> CursorMoved,CursorMovedI,CursorHold *.md call MarkdownView_Update()
 endfunction
 
 function! MarkdownView_Update()
@@ -72,6 +73,5 @@ endfunction
 " Commands:{{{1
 "------------------------------------------------
 command! MarkdownView call MarkdownView()
-autocmd! CursorMoved,CursorMovedI,CursorHold *.md call MarkdownView_Update()
 
 " vim: ts=4 fdm=marker foldcolumn=1 filetype=vim
