@@ -39,7 +39,7 @@ fname = os.path.basename(b.name).rsplit('.',1)[0] + '_mdv.html'
 frp = os.path.join(dirname,fname)
 os.system('python ' + pyfile + ' ' + frp + '&')
 EOA
-autocmd! <buffer> CursorMoved,CursorMovedI,CursorHold *.md call MarkdownView_Update()
+autocmd! CursorMoved,CursorMovedI,CursorHold <buffer> *.md call MarkdownView_Update()
 endfunction
 
 function! MarkdownView_Update()
