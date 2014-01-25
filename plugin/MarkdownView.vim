@@ -37,7 +37,7 @@ b = vim.current.buffer
 dirname = os.path.dirname(b.name)
 fname = os.path.basename(b.name).rsplit('.',1)[0] + '_mdv.html'
 frp = os.path.join(dirname,fname)
-os.system('python ' + pyfile + ' ' + frp + '&')
+os.system('python2 ' + pyfile + ' ' + frp + '&')
 EOA
 autocmd! CursorMoved,CursorMovedI,CursorHold <buffer> call MarkdownView_Update()
 endfunction
