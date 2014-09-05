@@ -3,7 +3,8 @@
 " Email:        jiazhoulvke@gmail.com 
 " Blog:         http://www.jiazhoulvke.com 
 " Date:         2013-01-23 01:09:11
-" Version:      0.1
+" Update:       2014-09-05
+" Version:      0.2
 "------------------------------------------------
 
 "------------------------------------------------
@@ -13,65 +14,85 @@ if exists("g:markdownview_loaded")
     finish
 endif
 let g:markdownview_loaded=1
-" 自定义css样式名，无需添加后缀。不使用则留空。
 if !exists('g:markdownview_css')
-    let g:markdownview_css = ''
+    let g:markdownview_css = 'github.css'
 endif
+if !exists('g:markdownview_port')
+    let g:markdownview_port = '9527'
+endif
+if !exists('g:markdownview_viewer')
+    let g:markdownview_viewer = 'x-www-browser'
+endif
+
 
 "------------------------------------------------
 " Functions:{{{1
 "------------------------------------------------
-python << EOA
-import os
-import vim
-EOA
-
 let s:markdownview_sfile = expand('<sfile>')
+python << EOA
+#coding=utf8
+import httplib,urllib,os,vim,markdown
+port = vim.eval('g:markdownview_port')
+css = vim.eval('g:markdownview_css')
+sfile = vim.eval('s:markdownview_sfile')
+sdir = os.path.dirname(sfile)
+httpClient = httplib.HTTPConnection('localhost', int(port))
+EOA
 
 function! MarkdownView()
+let b:markdownview_started = 1
 python << EOA
-sfile = vim.eval('s:markdownview_sfile')
-sdirname = os.path.dirname(sfile)
-pyfile = os.path.join(sdirname,'MarkdownView.py')
-b = vim.current.buffer
-dirname = os.path.dirname(b.name)
-fname = os.path.basename(b.name).rsplit('.',1)[0] + '_mdv.html'
-frp = os.path.join(dirname,fname)
-os.system('python2 ' + pyfile + ' ' + frp + '&')
+pyfile = os.path.join(sdir,'MarkdownView.py')
+os.system('python ' + pyfile + ' ' + sdir + ' ' + port + ' ' + css + '&')
+viewer = vim.eval('g:markdownview_viewer')
+if viewer == 'webkit':
+    import webkit,gtk
+    win=gtk.Window(gtk.WINDOW_TOPLEVEL)
+    win.set_size_request(640,480)
+    win.connect('destroy',gtk.main_quit)
+    wv = webkit.WebView()
+    sw = gtk.ScrolledWindow()
+    sw.add(wv)
+    win.add(sw)
+    win.show_all()
+    wv.open('http://localhost:'+port)
+    gtk.main()
+else:
+    os.system(viewer + ' http://localhost:'+port+'&')
 EOA
-autocmd! CursorMoved,CursorMovedI,CursorHold <buffer> call MarkdownView_Update()
+endfunction
+
+function! MarkdownView_Quit()
+if exists('b:markdownview_started')
+    call system('wget http://localhost:'.g:markdownview_port.'/quit')
+endif
 endfunction
 
 function! MarkdownView_Update()
+if !exists('b:markdownview_started')
+    return
+endif
+let lines = getline(1,'$')
 python << EOA
-import markdown
-import webkit
-b = vim.current.buffer
-r = b.range(1,len(b))
-html = '<html><meta http-equiv="refresh" content="1" /><meta http-equiv="Content-Type" content="text/html; charset=utf-8" />'
-css = vim.eval('g:markdownview_css')
-
-
-
-csspath = os.path.dirname(os.path.dirname(vim.eval('s:markdownview_sfile')))
-if len(css)>0:
-    cssfile = os.path.join(csspath,css+'.css')
-else:
-    cssfile = os.path.join(csspath,'github.css')
-html += '<link rel="stylesheet" type="text/css" href="file:///'+cssfile+'" media="all" />'
-html += '<body>' + markdown.markdown('\n'.join(r)) + '</body></html>'
-dirname = os.path.dirname(b.name)
-fname = os.path.basename(b.name).rsplit('.',1)[0] + '_mdv.html'
-frp = os.path.join(dirname,fname)
-f = open(frp,'w')
-f.write(html)
-f.close()
+#coding=utf-8
+reload(sys)
+sys.setdefaultencoding('UTF-8')
+curline = int(vim.eval('line(".")'))
+lines = vim.eval('lines')
+lines.append('')
+lines[curline-1] = '<span id="target"></span>\n' + lines[curline-1]
+content = markdown.markdown('\n'.join(lines))
+cfile = os.path.join(sdir,'content.html')
+contentfile = open(cfile,'w')
+contentfile.write(content)
+contentfile.close()
 EOA
 endfunction
 
 "------------------------------------------------
-" Commands:{{{1
+" Bind:{{{1
 "------------------------------------------------
+autocmd! CursorMoved,CursorMovedI,CursorHold *.md call MarkdownView_Update()
+autocmd! BufDelete,BufUnload,VimLeave *.md call MarkdownView_Quit()
 command! MarkdownView call MarkdownView()
-
-" vim: ts=4 fdm=marker foldcolumn=1 filetype=vim
+command! MarkdownViewQuit call MarkdownView_Quit()

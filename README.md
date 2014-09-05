@@ -2,10 +2,12 @@
 
 让Vim变成所见即所得的MarkDown文件编辑器，可以在编辑时预览最终效果。
 
+
 ## 安装需求
 
-* Vim编译了python支持
-* 安装了python-webkit、python-gtk、python-markdown
+* Vim编译了python支持 
+* python-markdown
+* 选装:python-webkit、python-gtk
 
 
 ## 安装

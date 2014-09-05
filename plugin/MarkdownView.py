@@ -1,23 +1,30 @@
-#!/usr/bin/env python2
-import gtk
-import webkit
-import sys
+#!/usr/bin/env python
+#coding=utf8
 
-win=gtk.Window(gtk.WINDOW_TOPLEVEL)
-win.set_size_request(640,480)
-win.connect('destroy',gtk.main_quit)
+import os,sys
+from bottle import Bottle,run,static_file,request
 
-wv = webkit.WebView()
-sw = gtk.ScrolledWindow()
-sw.add(wv)
-win.add(sw)
-win.show_all()
+app = Bottle()
+app_path = sys.argv[1]
+port = sys.argv[2]
+css = sys.argv[3]
+os.chdir(app_path)
 
-fname = sys.argv[1]
-html = '<html><meta http-equiv="refresh" content="1" /><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /><body><h2>MarkdownView<h4>by jiazhoulvke</h4></h2></body></html>'
-f = open(fname,'w')
-f.write(html)
-f.close()
-wv.open('file://'+fname)
+@app.route('/')
+def index():
+    f = open('mdv.html')
+    tpl = f.read()
+    f.close()
+    html = tpl.replace('#css#',css)
+    return  html
 
-gtk.main()
+@app.route('/quit')
+def quit():
+    pid = os.getpid()
+    os.system('kill -s 9 ' + str(pid))
+
+@app.route('/static/<filename>')
+def static(filename):
+    return static_file(filename,root = app_path)
+
+run(app, host='localhost', port=str(port))
