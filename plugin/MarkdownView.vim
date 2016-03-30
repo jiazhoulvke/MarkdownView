@@ -43,7 +43,7 @@ function! MarkdownView()
 let b:markdownview_started = 1
 python << EOA
 pyfile = os.path.join(sdir,'MarkdownView.py')
-os.system('python ' + pyfile + ' ' + sdir + ' ' + port + ' ' + css + '&')
+os.system('python ' + pyfile + ' ' + sdir + ' ' + port + ' ' + css + ' >/dev/null &')
 viewer = vim.eval('g:markdownview_viewer')
 if viewer == 'webkit':
     import webkit,gtk
@@ -66,6 +66,7 @@ function! MarkdownView_Quit()
 if exists('b:markdownview_started')
     call system('wget http://localhost:'.g:markdownview_port.'/quit')
 endif
+let b:markdownview_started = 0
 endfunction
 
 function! MarkdownView_Update()
