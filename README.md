@@ -12,7 +12,7 @@ MarkdownView是一个可以让Vim变成所见即所得的Markdown编辑器的插
 
 ## 安装 ##
 
-- [Plug](https://github.com/tpope/vim-pathogen) 
+- [Plug](https://github.com/junegunn/vim-plug) 
 `Plug 'jiazhoulvke/MarkdownView'`
 - [Vundle](https://github.com/gmarik/vundle)
 `Plugin 'jiazhoulvke/MarkdownView'`
