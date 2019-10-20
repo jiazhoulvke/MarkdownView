@@ -1,3 +1,6 @@
+**注意** 本插件很久没有再维护，推荐使用更好用的[iamcco/markdown-preview.nvim](https://github.com/iamcco/markdown-preview.nvim)
+
+
 # MarkdownView #
 
 MarkdownView是一个可以让Vim变成所见即所得的Markdown编辑器的插件。
